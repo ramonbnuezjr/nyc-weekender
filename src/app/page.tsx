@@ -35,7 +35,6 @@ export default function Home() {
   const [currentQuery, setCurrentQuery] = useState('');
   const [chatResponse, setChatResponse] = useState<ChatResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [testInput, setTestInput] = useState('');
 
   const handleSearch = async (message: string) => {
     setIsLoading(true);
@@ -72,41 +71,15 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <main className="min-h-screen bg-[#202124]">
       <div className="container mx-auto px-4 py-12">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            NYC Chatbot
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Your AI assistant for Central Park and NYC weekend planning. 
-            Get weather-aware suggestions and local insights.
-          </p>
-        </div>
-
-        {/* Test Input - Remove this after fixing */}
-        <div className="w-full max-w-2xl mx-auto mb-8 p-4 bg-white rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-2">🧪 Test Input (Debug)</h3>
-          <input
-            type="text"
-            value={testInput}
-            onChange={(e) => setTestInput(e.target.value)}
-            placeholder="Type here to test React state..."
-            className="w-full p-3 border rounded-lg"
-          />
-          <p className="text-sm text-gray-600 mt-2">
-            Current value: <strong>"{testInput}"</strong> | Length: {testInput.length}
-          </p>
-        </div>
-
-        {/* Search Component */}
+        {/* Search Component - Now includes the NYC logo */}
         <Search onSearch={handleSearch} isLoading={isLoading} />
 
         {/* Error Display */}
         {error && (
           <div className="w-full max-w-2xl mx-auto mt-8">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div className="bg-red-900/20 border border-red-700/30 rounded-lg p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg className="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,8 +87,8 @@ export default function Home() {
                   </svg>
                 </div>
                 <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800">Error</h3>
-                  <p className="text-sm text-red-700 mt-1">{error}</p>
+                  <h3 className="text-sm font-medium text-red-300">Error</h3>
+                  <p className="text-sm text-red-200 mt-1">{error}</p>
                 </div>
               </div>
             </div>
@@ -145,9 +118,9 @@ export default function Home() {
         <Debug />
 
         {/* Footer */}
-        <div className="mt-16 text-center text-sm text-gray-500">
+        <div className="mt-16 text-center text-sm text-gray-400">
           <p>
-            Powered by Google Gemini AI • Weather data from Open-Meteo • 
+            Powered by Google Gemini AI • Weather data from OpenWeatherMap • 
             Built for NYC weekend planning
           </p>
           <p className="mt-2">

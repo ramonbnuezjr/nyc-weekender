@@ -27,6 +27,7 @@ IMPORTANT RULES:
 - If events are unavailable, say so clearly and offer weather-aware suggestions instead
 - Focus on Central Park and NYC-specific information
 - Always consider weather context when making recommendations
+- Use accurate weather data from OpenWeatherMap
 
 Your responses should be helpful, accurate, and NYC-focused.`;
 
@@ -70,7 +71,7 @@ Use the weather data provided to give accurate information.`;
 
 /**
  * Helper function to format weather data into a readable summary
- * Converts Celsius to Fahrenheit for US users
+ * Works with OpenWeatherMap data (already in Fahrenheit)
  */
 export function formatWeatherSummary(weatherData: WeatherData): string {
   if (!weatherData || !weatherData.daily) {
@@ -81,12 +82,16 @@ export function formatWeatherSummary(weatherData: WeatherData): string {
   const saturday = daily.time[0];
   const sunday = daily.time[1];
   
-  // Convert Celsius to Fahrenheit
-  const satMinF = Math.round((daily.temperature_2m_min[0] * 9/5) + 32);
-  const satMaxF = Math.round((daily.temperature_2m_max[0] * 9/5) + 32);
-  const sunMinF = Math.round((daily.temperature_2m_min[1] * 9/5) + 32);
-  const sunMaxF = Math.round((daily.temperature_2m_max[1] * 9/5) + 32);
+  // OpenWeatherMap data is already in Fahrenheit
+  const satMinF = Math.round(daily.temperature_2m_min[0]);
+  const satMaxF = Math.round(daily.temperature_2m_max[0]);
+  const sunMinF = Math.round(daily.temperature_2m_min[1]);
+  const sunMaxF = Math.round(daily.temperature_2m_max[1]);
   
-  return `Saturday (${saturday}): ${satMinF}°F to ${satMaxF}°F, ${daily.precipitation_probability_max[0]}% chance of rain
-Sunday (${sunday}): ${sunMinF}°F to ${sunMaxF}°F, ${daily.precipitation_probability_max[1]}% chance of rain`;
+  // Format precipitation probability
+  const satPrecip = daily.precipitation_probability_max[0];
+  const sunPrecip = daily.precipitation_probability_max[1];
+  
+  return `Saturday (${saturday}): ${satMinF}°F to ${satMaxF}°F, ${satPrecip}% chance of rain
+Sunday (${sunday}): ${sunMinF}°F to ${sunMaxF}°F, ${sunPrecip}% chance of rain`;
 }

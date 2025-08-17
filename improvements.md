@@ -4,7 +4,7 @@ _Status: living doc. Keep PR-sized slices. Prefer v0.1/v0.2 shippable steps._
 
 ## ✅ Completed (v0)
 - [x] Google Gemini AI integration with proper prompt engineering
-- [x] Open-Meteo weather API integration for Central Park
+- [x] OpenWeatherMap weather API integration for Central Park (replaced Open-Meteo)
 - [x] Weather-aware activity suggestions (no hallucinated events)
 - [x] Clean, Google-like search interface with example queries
 - [x] Responsive result cards with weather context
@@ -12,9 +12,14 @@ _Status: living doc. Keep PR-sized slices. Prefer v0.1/v0.2 shippable steps._
 - [x] Route segment configs preventing build-time execution
 - [x] TypeScript types and ESLint compliance
 - [x] Comprehensive documentation and setup instructions
+- [x] Google-style dark mode UI transformation
+- [x] Weather temperature conversion fixes (Celsius to Fahrenheit)
+- [x] Modern search bar with AI Mode button, voice, and camera icons
 
 ## Now / Next / Later
 - **Now**
+  - [ ] Fix OpenWeatherMap API key configuration
+  - [ ] Test Google-style UI functionality
   - [ ] v0 polish: empty-state copy, error states, loading shimmer
   - [ ] Cache weather for weekend window (per lat/lon)
   - [ ] p50/p95 latency instrumentation
@@ -41,6 +46,8 @@ _Status: living doc. Keep PR-sized slices. Prefer v0.1/v0.2 shippable steps._
 - [x] Unified time helpers for "this weekend" in EST/EDT
 - [x] Error taxonomy & user messages
 - [x] Centralized fetch wrapper with retry/backoff
+- [x] Weather API provider upgrade (OpenWeatherMap)
+- [x] UI theme consistency (Google dark mode)
 - [ ] Add unit tests for time utilities and prompt functions
 - [ ] Add integration tests for API endpoints
 
@@ -50,3 +57,5 @@ _Status: living doc. Keep PR-sized slices. Prefer v0.1/v0.2 shippable steps._
 - Map pin preview (static image) with walking entrances
 - Weekend weather alerts for Central Park visitors
 - Integration with NYC MTA for transit recommendations
+- Voice search integration (microphone icon functionality)
+- Image search for Central Park locations (camera icon functionality)

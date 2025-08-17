@@ -1,8 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #202124;
+  --foreground: #ffffff;
+  --search-bg: #303134;
+  --search-border: #5f6368;
+  --search-hover: #3c4043;
+  --button-bg: #8ab4f8;
+  --button-text: #202124;
+  --button-hover: #aecbfa;
 }
 
 @theme inline {
@@ -12,15 +18,43 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Google Sans', 'Roboto', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Google-style search bar */
+.google-search {
+  background: var(--search-bg);
+  border: 1px solid var(--search-border);
+  border-radius: 24px;
+  transition: all 0.2s ease;
+}
+
+.google-search:hover {
+  background: var(--search-hover);
+  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+  border-color: transparent;
+}
+
+.google-search:focus-within {
+  background: var(--search-bg);
+  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+  border-color: transparent;
+}
+
+/* Google-style buttons */
+.google-button {
+  background: var(--button-bg);
+  color: var(--button-text);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.google-button:hover {
+  background: var(--button-hover);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }

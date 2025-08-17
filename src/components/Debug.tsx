@@ -39,8 +39,9 @@ export default function Debug() {
   const checkEnvironment = () => {
     const envVars = [
       'GEMINI_API_KEY',
+      'OPENWEATHER_API_KEY',
       'WEATHER_PROVIDER',
-      'OPEN_METEO_BASE',
+      'OPENWEATHER_BASE',
       'NYC_TIMEZONE',
       'DEFAULT_LAT',
       'DEFAULT_LON',
@@ -56,14 +57,14 @@ export default function Debug() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto mt-8 p-4 bg-gray-100 rounded-lg">
-      <h3 className="text-lg font-semibold mb-4">Debug Panel</h3>
+    <div className="w-full max-w-2xl mx-auto mt-8 p-4 bg-[#303134] rounded-lg border border-gray-700">
+      <h3 className="text-lg font-semibold mb-4 text-white">Debug Panel</h3>
       
       <div className="flex gap-2 mb-4">
         <button
           onClick={testWeatherAPI}
           disabled={isLoading}
-          className="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+          className="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 transition-colors"
         >
           Test Weather API
         </button>
@@ -71,35 +72,38 @@ export default function Debug() {
         <button
           onClick={testChatAPI}
           disabled={isLoading}
-          className="px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50"
+          className="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 transition-colors"
         >
           Test Chat API
         </button>
         
         <button
           onClick={checkEnvironment}
-          className="px-3 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+          className="px-3 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 transition-colors"
         >
           Check Environment
         </button>
       </div>
       
       {debugInfo && (
-        <div className="mt-4 p-3 bg-white rounded border">
-          <h4 className="font-medium mb-2">Debug Output:</h4>
-          <pre className="text-sm whitespace-pre-wrap overflow-auto max-h-64">
+        <div className="mt-4 p-3 bg-[#202124] rounded border border-gray-600">
+          <h4 className="font-medium mb-2 text-white">Debug Output:</h4>
+          <pre className="text-sm whitespace-pre-wrap overflow-auto max-h-64 text-gray-300">
             {debugInfo}
           </pre>
         </div>
       )}
       
-      <div className="mt-4 text-sm text-gray-600">
+      <div className="mt-4 text-sm text-gray-300">
         <p><strong>Common Issues:</strong></p>
         <ul className="list-disc list-inside mt-2">
           <li>Missing GEMINI_API_KEY in .env.local</li>
+          <li>Missing OPENWEATHER_API_KEY in .env.local</li>
           <li>Development server needs restart after env changes</li>
           <li>API routes returning 500 errors</li>
         </ul>
+        
+        <p className="mt-2"><strong>Weather Provider:</strong> Now using OpenWeatherMap for better accuracy!</p>
       </div>
     </div>
   );
