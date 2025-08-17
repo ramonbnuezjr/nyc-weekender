@@ -66,3 +66,5 @@ The chatbot now delivers a **magical Central Park experience** with:
 - 2025-08-17 03:05 UTC — **BUG FIX**: Fixed Runtime TypeError with weather.daily.slice by adding proper type checking and fallback handling
 - 2025-08-17 03:10 UTC — **WEATHER DISPLAY FIX**: Updated Result component to handle both mock weather data structure and real OpenWeatherMap data structure for proper weather display
 - 2025-08-17 03:15 UTC — **WEATHER ENHANCEMENT**: Added humidity data to both mock weather generation and weather display cards for more comprehensive Central Park weather information
+- 2025-08-17 03:20 UTC — **BUG FIX**: Added specific handler for relaxation queries ("Where can I relax in Central Park?") to ensure beautiful, formatted responses instead of JSON
+- 2025-08-17 03:25 UTC — **ARCHITECTURE CLARIFICATION**: Confirmed hybrid approach using Google Gemini AI for intelligent responses + Intelligent Mock Data for consistent, reliable information

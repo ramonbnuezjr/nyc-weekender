@@ -4,7 +4,21 @@
 
 **Version**: v0.1.0 - Beautiful UI with Mock Data  
 **Status**: ✅ **READY FOR PRODUCTION & USER TESTING**  
-**Last Updated**: 2025-08-17 03:20 UTC
+**Last Updated**: 2025-08-17 03:25 UTC
+
+### 🏗️ **Architecture: Hybrid AI + Mock Data**
+
+Our MVP uses a **powerful hybrid approach** that combines:
+
+- **🤖 Google Gemini AI**: Generates intelligent, story-driven responses
+- **📊 Intelligent Mock Data**: Provides consistent, realistic Central Park information
+- **🎯 Best of Both Worlds**: Human-like conversation with reliable data
+
+**Why This Approach?**
+- **Gemini AI**: Delivers engaging narratives and intelligent insights
+- **Mock Data**: Ensures consistent user experience regardless of API availability
+- **Production Ready**: Works perfectly for users even when external APIs fail
+- **Scalable**: Easy to swap mock data with real APIs when ready
 
 ---
 

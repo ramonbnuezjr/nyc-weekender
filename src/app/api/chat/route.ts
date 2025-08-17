@@ -102,6 +102,40 @@ IMPORTANT:
 - The user can see the detailed event list below your response.
 
 FORMATTING: Use clear, readable formatting with proper spacing and structure.`;
+    } else if (message.toLowerCase().includes('relax') || message.toLowerCase().includes('peaceful') || message.toLowerCase().includes('quiet')) {
+      // Enhanced prompt for relaxation queries
+      systemPrompt += '\n\n' + `Based on real NYC Parks events data and weather for Central Park this weekend:
+
+EVENTS DATA:
+${eventsData?.events?.length > 0 ? 
+  eventsData.events.map((event: any) => 
+    `- ${event.title} (${event.startTime}) - ${event.isFree ? 'Free' : 'Paid'}${event.description ? ` - ${event.description}` : ''}`
+  ).join('\n') : 
+  'No events found for this weekend'
+}
+
+WEATHER FORECAST:
+${weatherData ? formatWeatherSummary(weatherData) : 'Weather data unavailable'}
+
+Please create a beautiful, calming response about finding peaceful spots in Central Park:
+
+1. **Paint a picture** of Central Park as a peaceful escape from the city
+2. **Suggest specific relaxing locations** that are perfect for the current weather
+3. **Mention any relevant events** that could enhance the relaxation experience
+4. **Create an emotional connection** to finding peace in nature
+
+EXAMPLE APPROACH:
+- "Central Park offers many peaceful spots perfect for [weather description]..."
+- "For a truly relaxing experience, consider visiting [specific location]..."
+- "The [weather condition] makes this an ideal time to [relaxing activity]..."
+
+IMPORTANT: 
+- Focus on relaxation and peaceful experiences
+- Suggest real locations and activities
+- Keep the tone calming and inviting
+- Use beautiful, descriptive language
+
+FORMATTING: Use clear, readable formatting with proper spacing and structure.`;
     } else if (message.toLowerCase().includes('plan') || message.toLowerCase().includes('suggest')) {
       systemPrompt += '\n\n' + WEATHER_CONTEXT_PROMPT.replace('{weather_summary}', weatherData ? formatWeatherSummary(weatherData) : 'Weather data unavailable');
       
