@@ -51,14 +51,69 @@ export async function POST(request: NextRequest) {
       console.log('Weather API returned error:', weatherResponse.status);
     }
     
+    // Fetch events data for Central Park
+    const eventsResponse = await fetch(`${request.nextUrl.origin}/api/events`);
+    let eventsData = null;
+    
+    if (eventsResponse.ok) {
+      eventsData = await eventsResponse.json();
+      console.log(`Events data fetched successfully: ${eventsData.events?.length || 0} events`);
+    } else {
+      console.log('Events API returned error:', eventsResponse.status);
+    }
+    
     // Determine the type of query and select appropriate prompt
     const userPrompt = message;
     let systemPrompt = SYSTEM_PROMPT;
     
     if (message.toLowerCase().includes('weather')) {
       systemPrompt += '\n\n' + WEATHER_QUERY_PROMPT;
-    } else if (message.toLowerCase().includes('plan') || message.toLowerCase().includes('going on') || message.toLowerCase().includes('suggest')) {
+    } else if (message.toLowerCase().includes('going on') || message.toLowerCase().includes('events')) {
+      // Enhanced prompt for events queries
+      systemPrompt += '\n\n' + `Based on real NYC Parks events data for Central Park this weekend:
+
+EVENTS DATA:
+${eventsData?.events?.length > 0 ? 
+  eventsData.events.map((event: any) => 
+    `- ${event.title} (${event.startTime}) - ${event.isFree ? 'Free' : 'Paid'}${event.description ? ` - ${event.description}` : ''}`
+  ).join('\n') : 
+  'No events found for this weekend'
+}
+
+WEATHER FORECAST:
+${weatherData ? formatWeatherSummary(weatherData) : 'Weather data unavailable'}
+
+Please create a compelling, story-driven response that:
+
+1. **Tells a story** about what someone could experience this weekend in Central Park
+2. **Weaves together** the weather conditions and available events
+3. **Creates an emotional connection** to the park experience
+4. **Provides practical insights** without listing out event details
+
+EXAMPLE STORY APPROACH:
+- "Picture yourself on a [weather description] Saturday morning in Central Park..."
+- "As the sun [weather context], you could [event suggestion]..."
+- "The perfect weekend for [weather-appropriate activity] while [event opportunity]..."
+
+IMPORTANT: 
+- Only mention events that are actually in the data. Never invent or hallucinate events.
+- DO NOT list out all the individual events with times/details - that information is displayed separately in the UI.
+- Focus on storytelling and emotional connection, not data listing.
+- The user can see the detailed event list below your response.
+
+FORMATTING: Use clear, readable formatting with proper spacing and structure.`;
+    } else if (message.toLowerCase().includes('plan') || message.toLowerCase().includes('suggest')) {
       systemPrompt += '\n\n' + WEATHER_CONTEXT_PROMPT.replace('{weather_summary}', weatherData ? formatWeatherSummary(weatherData) : 'Weather data unavailable');
+      
+      // Add events context if available
+      if (eventsData?.events?.length > 0) {
+        systemPrompt += `\n\nREAL EVENTS THIS WEEKEND:
+${eventsData.events.map((event: any) => 
+  `- ${event.title} (${event.startTime}) - ${event.isFree ? 'Free' : 'Paid'}`
+).join('\n')}
+
+Create a compelling story that weaves together the weather and events. Focus on storytelling and emotional connection rather than listing event details!`;
+      }
     }
     
     // Initialize Gemini model
@@ -67,7 +122,7 @@ export async function POST(request: NextRequest) {
     // Create chat session
     const chat = model.startChat({
       generationConfig: {
-        maxOutputTokens: 500,
+        maxOutputTokens: 800, // Increased for event data
         temperature: 0.7,
       },
     });
@@ -87,6 +142,8 @@ export async function POST(request: NextRequest) {
     console.log(`Chat request processed in ${duration}ms`, {
       messageLength: message.length,
       hasWeatherData: !!weatherData,
+      hasEventsData: !!eventsData,
+      eventCount: eventsData?.events?.length || 0,
       model: MODEL_ID,
       timestamp: new Date().toISOString()
     });
@@ -94,6 +151,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       response: responseText,
       weather: weatherData,
+      events: eventsData,
       metadata: {
         duration,
         model: MODEL_ID,

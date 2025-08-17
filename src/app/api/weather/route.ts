@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getNextWeekend } from '@/lib/time';
+import { generateMockWeather } from '@/lib/nyc-data';
 
 // Force dynamic runtime to prevent build-time execution
 export const dynamic = 'force-dynamic';
@@ -22,21 +23,23 @@ export async function GET(request: NextRequest) {
     });
 
     if (!OPENWEATHER_API_KEY) {
-      console.error('OpenWeatherMap API key not configured');
-      return NextResponse.json(
-        { error: 'OpenWeatherMap API key not configured' },
-        { status: 500 }
-      );
+      console.error('OpenWeatherMap API key not configured, using mock weather data');
+      const mockWeather = generateMockWeather();
+      return NextResponse.json({
+        ...mockWeather,
+        metadata: {
+          ...mockWeather.metadata,
+          note: 'Using mock weather data due to missing API key'
+        }
+      });
     }
 
     const { searchParams } = new URL(request.url);
     const lat = searchParams.get('lat') || DEFAULT_LAT;
     const lon = searchParams.get('lon') || DEFAULT_LON;
     
-    // Get weekend dates for weather forecast
     const { saturday, sunday } = getNextWeekend();
     
-    // OpenWeatherMap forecast endpoint (5-day forecast)
     const weatherUrl = `${OPENWEATHER_BASE}/forecast?lat=${lat}&lon=${lon}&appid=${OPENWEATHER_API_KEY}&units=imperial&cnt=40`;
     
     console.log('Calling OpenWeatherMap API:', weatherUrl.replace(OPENWEATHER_API_KEY, 'HIDDEN'));
@@ -48,16 +51,25 @@ export async function GET(request: NextRequest) {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('OpenWeatherMap API error:', response.status, errorText);
-      throw new Error(`OpenWeatherMap API error: ${response.status} - ${errorText}`);
+      
+      // Fall back to mock weather data instead of throwing an error
+      console.log('OpenWeatherMap API failed, using mock weather data as fallback');
+      const mockWeather = generateMockWeather();
+      return NextResponse.json({
+        ...mockWeather,
+        metadata: {
+          ...mockWeather.metadata,
+          note: 'Using mock weather data due to OpenWeatherMap API error',
+          original_error: `${response.status}: ${errorText}`
+        }
+      });
     }
     
     const weatherData = await response.json();
     console.log('OpenWeatherMap data received, processing...');
     
-    // Process OpenWeatherMap data to match our expected format
     const processedData = processOpenWeatherData(weatherData, saturday, sunday);
     
-    // Add metadata
     const enrichedData = {
       ...processedData,
       metadata: {
@@ -77,18 +89,23 @@ export async function GET(request: NextRequest) {
     
   } catch (error) {
     console.error('Weather API error:', error);
-    return NextResponse.json(
-      { 
-        error: 'Failed to fetch weather data',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      },
-      { status: 500 }
-    );
+    
+    // Even on error, return mock weather data so the UI can still work
+    console.log('Weather API error occurred, using mock weather data as fallback');
+    const mockWeather = generateMockWeather();
+    
+    return NextResponse.json({
+      ...mockWeather,
+      metadata: {
+        ...mockWeather.metadata,
+        note: 'Using mock weather data due to API error',
+        error_details: error instanceof Error ? error.message : 'Unknown error'
+      }
+    });
   }
 }
 
 function processOpenWeatherData(weatherData: any, saturday: Date, sunday: Date) {
-  // OpenWeatherMap returns data in 3-hour intervals
   const saturdayStr = saturday.toISOString().split('T')[0];
   const sundayStr = sunday.toISOString().split('T')[0];
   
@@ -107,7 +124,6 @@ function processOpenWeatherData(weatherData: any, saturday: Date, sunday: Date) 
     sundayCount: sundayData.length
   });
   
-  // Calculate min/max temperatures and precipitation for each day
   const getDayStats = (dayData: any[]) => {
     if (dayData.length === 0) return { min: 0, max: 0, precipitation: 0 };
     

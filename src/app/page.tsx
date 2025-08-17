@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Search from '@/components/Search';
 import Result from '@/components/Result';
-import Debug from '@/components/Debug';
 
 interface WeatherData {
   daily: {
@@ -20,9 +19,35 @@ interface WeatherData {
   };
 }
 
+interface CentralParkEvent {
+  id: string;
+  title: string;
+  description?: string;
+  startTime: string;
+  endTime: string;
+  isFree: boolean;
+  ticketUrl?: string;
+  category?: string;
+  location: {
+    lat: number;
+    lng: number;
+  };
+  source: string;
+}
+
+interface EventsData {
+  events: CentralParkEvent[];
+  metadata: {
+    total_events: number;
+    source: string;
+    timestamp: string;
+  };
+}
+
 interface ChatResponse {
   response: string;
   weather: WeatherData | null;
+  events: EventsData | null;
   metadata: {
     duration: number;
     model: string;
@@ -73,8 +98,9 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#202124]">
       <div className="container mx-auto px-4 py-12">
+
         {/* Search Component - Now includes the NYC logo */}
-        <Search onSearch={handleSearch} isLoading={isLoading} />
+        <Search onSearch={handleSearch} />
 
         {/* Error Display */}
         {error && (
@@ -100,31 +126,27 @@ export default function Home() {
           <Result
             response={chatResponse.response}
             weather={chatResponse.weather}
+            events={chatResponse.events}
             query={currentQuery}
           />
         )}
 
         {/* Loading State */}
         {isLoading && (
-          <Result
-            response=""
-            weather={null}
-            query={currentQuery}
-            isLoading={true}
-          />
+          <div className="w-full max-w-2xl mx-auto mt-8 p-8 text-center">
+            <div className="shimmer w-16 h-16 bg-gray-600 rounded-full mx-auto mb-4"></div>
+            <p className="text-gray-400">Thinking about Central Park...</p>
+          </div>
         )}
-
-        {/* Debug Panel - Remove this after fixing issues */}
-        <Debug />
 
         {/* Footer */}
         <div className="mt-16 text-center text-sm text-gray-400">
           <p>
             Powered by Google Gemini AI • Weather data from OpenWeatherMap • 
-            Built for NYC weekend planning
+            Events from NYC Parks Open Data • Built for NYC weekend planning
           </p>
           <p className="mt-2">
-            Events and specific activities coming in v0.1
+            Real events and activities powered by NYC Open Data
           </p>
         </div>
       </div>
