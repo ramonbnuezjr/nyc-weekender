@@ -10,7 +10,10 @@ export const runtime = 'nodejs';
 
 function getEnv(name: string): string {
   const v = process.env[name];
-  if (!v) throw new Error(`Missing env var: ${name}`);
+  if (!v) {
+    console.error(`Missing environment variable: ${name}`);
+    throw new Error(`Missing environment variable: ${name}`);
+  }
   return v;
 }
 
@@ -21,6 +24,8 @@ export async function POST(request: NextRequest) {
     // Read env vars at runtime, not build time
     const GEMINI_API_KEY = getEnv('GEMINI_API_KEY');
     const MODEL_ID = process.env.MODEL_ID || 'gemini-2.0-flash';
+
+    console.log('Environment check passed, initializing Gemini...');
 
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
     
@@ -33,12 +38,17 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    console.log('Processing message:', message);
+    
     // Fetch weather data for Central Park
     const weatherResponse = await fetch(`${request.nextUrl.origin}/api/weather`);
     let weatherData = null;
     
     if (weatherResponse.ok) {
       weatherData = await weatherResponse.json();
+      console.log('Weather data fetched successfully');
+    } else {
+      console.log('Weather API returned error:', weatherResponse.status);
     }
     
     // Determine the type of query and select appropriate prompt
@@ -64,6 +74,8 @@ export async function POST(request: NextRequest) {
     
     // Send message with context - combine system prompt and user message
     const fullPrompt = `${systemPrompt}\n\nUser: ${userPrompt}`;
+    console.log('Sending to Gemini:', fullPrompt.substring(0, 200) + '...');
+    
     const result = await chat.sendMessage(fullPrompt);
     
     const response = await result.response;
@@ -93,9 +105,19 @@ export async function POST(request: NextRequest) {
     const duration = Date.now() - startTime;
     console.error('Chat API error:', error);
     
+    // Provide more specific error messages
+    let errorMessage = 'Failed to process chat request';
+    if (error instanceof Error) {
+      if (error.message.includes('Missing environment variable')) {
+        errorMessage = 'API configuration error: Missing required environment variables';
+      } else {
+        errorMessage = error.message;
+      }
+    }
+    
     return NextResponse.json(
       { 
-        error: 'Failed to process chat request',
+        error: errorMessage,
         metadata: {
           duration,
           timestamp: new Date().toISOString()

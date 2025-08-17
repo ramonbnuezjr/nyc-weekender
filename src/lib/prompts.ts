@@ -70,6 +70,7 @@ Use the weather data provided to give accurate information.`;
 
 /**
  * Helper function to format weather data into a readable summary
+ * Converts Celsius to Fahrenheit for US users
  */
 export function formatWeatherSummary(weatherData: WeatherData): string {
   if (!weatherData || !weatherData.daily) {
@@ -80,6 +81,12 @@ export function formatWeatherSummary(weatherData: WeatherData): string {
   const saturday = daily.time[0];
   const sunday = daily.time[1];
   
-  return `Saturday (${saturday}): ${daily.temperature_2m_min[0]}°F to ${daily.temperature_2m_max[0]}°F, ${daily.precipitation_probability_max[0]}% chance of rain
-Sunday (${sunday}): ${daily.temperature_2m_min[1]}°F to ${daily.temperature_2m_max[1]}°F, ${daily.precipitation_probability_max[1]}% chance of rain`;
+  // Convert Celsius to Fahrenheit
+  const satMinF = Math.round((daily.temperature_2m_min[0] * 9/5) + 32);
+  const satMaxF = Math.round((daily.temperature_2m_max[0] * 9/5) + 32);
+  const sunMinF = Math.round((daily.temperature_2m_min[1] * 9/5) + 32);
+  const sunMaxF = Math.round((daily.temperature_2m_max[1] * 9/5) + 32);
+  
+  return `Saturday (${saturday}): ${satMinF}°F to ${satMaxF}°F, ${daily.precipitation_probability_max[0]}% chance of rain
+Sunday (${sunday}): ${sunMinF}°F to ${sunMaxF}°F, ${daily.precipitation_probability_max[1]}% chance of rain`;
 }

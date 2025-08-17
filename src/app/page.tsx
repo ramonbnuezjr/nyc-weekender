@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Search from '@/components/Search';
 import Result from '@/components/Result';
+import Debug from '@/components/Debug';
 
 interface WeatherData {
   daily: {
@@ -34,6 +35,7 @@ export default function Home() {
   const [currentQuery, setCurrentQuery] = useState('');
   const [chatResponse, setChatResponse] = useState<ChatResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [testInput, setTestInput] = useState('');
 
   const handleSearch = async (message: string) => {
     setIsLoading(true);
@@ -83,6 +85,21 @@ export default function Home() {
           </p>
         </div>
 
+        {/* Test Input - Remove this after fixing */}
+        <div className="w-full max-w-2xl mx-auto mb-8 p-4 bg-white rounded-lg shadow">
+          <h3 className="text-lg font-semibold mb-2">🧪 Test Input (Debug)</h3>
+          <input
+            type="text"
+            value={testInput}
+            onChange={(e) => setTestInput(e.target.value)}
+            placeholder="Type here to test React state..."
+            className="w-full p-3 border rounded-lg"
+          />
+          <p className="text-sm text-gray-600 mt-2">
+            Current value: <strong>"{testInput}"</strong> | Length: {testInput.length}
+          </p>
+        </div>
+
         {/* Search Component */}
         <Search onSearch={handleSearch} isLoading={isLoading} />
 
@@ -123,6 +140,9 @@ export default function Home() {
             isLoading={true}
           />
         )}
+
+        {/* Debug Panel - Remove this after fixing issues */}
+        <Debug />
 
         {/* Footer */}
         <div className="mt-16 text-center text-sm text-gray-500">

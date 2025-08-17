@@ -10,33 +10,55 @@ interface SearchProps {
 export default function Search({ onSearch, isLoading }: SearchProps) {
   const [message, setMessage] = useState('');
 
+  console.log('Search component render - message:', message, 'isLoading:', isLoading);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submitted with message:', message);
     if (message.trim() && !isLoading) {
       onSearch(message.trim());
       setMessage('');
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit(e);
-    }
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    console.log('Input changed from:', message, 'to:', newValue);
+    setMessage(newValue);
+  };
+
+  const handleExampleClick = (example: string) => {
+    console.log('Example clicked:', example);
+    onSearch(example);
   };
 
   return (
     <div className="w-full max-w-2xl mx-auto">
+      {/* Simple test input */}
+      <div className="mb-4 p-4 bg-white rounded border">
+        <h3 className="text-sm font-medium mb-2">Test Input (should work):</h3>
+        <input
+          type="text"
+          value={message}
+          onChange={handleInputChange}
+          placeholder="Type here to test..."
+          className="w-full p-2 border rounded"
+        />
+        <p className="text-xs text-gray-500 mt-1">Current value: "{message}"</p>
+      </div>
+
+      {/* Main search form */}
       <form onSubmit={handleSubmit} className="relative">
         <div className="relative">
           <input
             type="text"
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={handleKeyDown}
+            onChange={handleInputChange}
             placeholder="Ask about Central Park this weekend..."
             className="w-full px-6 py-4 text-lg border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-12"
             disabled={isLoading}
+            autoComplete="off"
+            spellCheck="false"
           />
           <button
             type="submit"
@@ -65,13 +87,18 @@ export default function Search({ onSearch, isLoading }: SearchProps) {
           ].map((example, index) => (
             <button
               key={index}
-              onClick={() => setMessage(example)}
-              className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+              onClick={() => handleExampleClick(example)}
+              className="px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-full transition-colors cursor-pointer"
             >
               {example}
             </button>
           ))}
         </div>
+      </div>
+      
+      {/* Debug info */}
+      <div className="mt-4 text-xs text-gray-400 text-center">
+        Debug: Message length: {message.length} | IsLoading: {isLoading.toString()}
       </div>
     </div>
   );
